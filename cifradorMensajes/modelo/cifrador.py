@@ -67,7 +67,7 @@ class ReglaCifradoTraslacion(ReglaCifrado):
 
     def encriptar(self, mensaje):
         if self.mensaje_valido(mensaje):
-            mensaje = mensaje.lower
+            mensaje = mensaje.lower()
             mensaje_cifrado =""
             for char in mensaje:
                 if char.isalpha():
@@ -90,43 +90,43 @@ class ReglaCifradoTraslacion(ReglaCifrado):
                 mensaje_descifrado += char
         return mensaje_descifrado
 
-    class ReglaCifradoNumerico (ReglaCifrado):
+class ReglaCifradoNumerico (ReglaCifrado):
 
-        def mensaje_valido(self,mensaje):
-            numeros = self.encontrar_numeros_mensaje(mensaje)
+    def mensaje_valido(self,mensaje):
+        numeros = self.encontrar_numeros_mensaje(mensaje)
 
+        if numeros:
+            errores= []
             if numeros:
-                errores= []
-                if numeros:
-                    for num_pos in numeros:
-                        errores.append (f"Error en posición {num_pos}: Número encontrado: {mensaje[num_pos]}")
-                    raise ContieneNumero ("\n".join (errores))
+                for num_pos in numeros:
+                    errores.append (f"Error en posición {num_pos}: Número encontrado: {mensaje[num_pos]}")
+                raise ContieneNumero ("\n".join (errores))
 
-            if mensaje.startswith(" ") or mensaje.endswith(" "):
-                raise ErrorContenido ("El mensaje no puede tener espacios al inicio o al final.")
+        if mensaje.startswith(" ") or mensaje.endswith(" "):
+            raise ErrorContenido ("El mensaje no puede tener espacios al inicio o al final.")
 
-            if "  " in mensaje:
-                raise DobleEspacio()
+        if "  " in mensaje:
+            raise DobleEspacio()
 
-            return True
+        return True
 
-        def encriptar(self,mensaje):
-            if self.mensaje_valido(mensaje):
-                mensaje = mensaje.lower()
-                mensaje_encriptado = ""
+    def encriptar(self,mensaje):
+        if self.mensaje_valido(mensaje):
+            mensaje = mensaje.lower()
+            mensaje_encriptado = ""
 
-                for char in mensaje:
-                    if char.isalpha():
-                        nuevo_caracter = ord(char)* self.token
-                        mensaje_encriptado += str(nuevo_caracter) +" "
-                return mensaje_encriptado.rstrip()
+            for char in mensaje:
+                if char.isalpha():
+                    nuevo_caracter = ord(char)* self.token
+                    mensaje_encriptado += str(nuevo_caracter) +" "
+            return mensaje_encriptado.rstrip()
 
-        def desencriptar(self,mensaje):
-            valores = mensaje.split()
-            mensaje_original = ""
-            for valor in valores:
-                valor_numerico = int(valor)
-                caracter_original = chr(valor_numerico//self.token)
-                mensaje_original += caracter_original
-            return mensaje_original
+    def desencriptar(self,mensaje):
+        valores = mensaje.split()
+        mensaje_original = ""
+        for valor in valores:
+            valor_numerico = int(valor)
+            caracter_original = chr(valor_numerico // self.token)
+            mensaje_original += caracter_original
+        return mensaje_original
 
